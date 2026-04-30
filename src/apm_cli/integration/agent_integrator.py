@@ -290,8 +290,6 @@ class AgentIntegrator(BaseIntegrator):
         - Strips agent-specific keys (``model``, ``tools``).
         - Preserves the markdown body verbatim.
         """
-        import yaml
-
         content = source.read_text(encoding="utf-8")
 
         stem = source.name
@@ -316,13 +314,13 @@ class AgentIntegrator(BaseIntegrator):
         name = fm.get("name", stem)
         description = fm.get("description", "")
 
-        # Use yaml.dump to safely serialize values -- prevents YAML key
+        # Use yaml.safe_dump to safely serialize values -- prevents YAML key
         # injection via multi-line name/description strings.
 
         fm_data: dict = {"name": name}
         if description:
             fm_data["description"] = description
-        fm_yaml = yaml.dump(fm_data, default_flow_style=False, allow_unicode=False).rstrip("\n")
+        fm_yaml = yaml.safe_dump(fm_data, default_flow_style=False, allow_unicode=True).rstrip("\n")
 
         result = f"---\n{fm_yaml}\n---\n" + body
         result, links_resolved = self.resolve_links(result, source, target)

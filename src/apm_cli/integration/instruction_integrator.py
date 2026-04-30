@@ -73,8 +73,7 @@ class InstructionIntegrator(BaseIntegrator):
         * ``cursor_rules``    -- convert ``applyTo:`` to ``globs:`` frontmatter
         * ``claude_rules``    -- convert ``applyTo:`` to ``paths:`` frontmatter
         * ``windsurf_rules``  -- convert ``applyTo:`` to ``trigger: glob`` frontmatter
-        * anything else       -- copy verbatim (identity transform, used by
-          ``windsurf_workflow`` and other plain-markdown formats)
+        * anything else       -- copy verbatim (identity transform)
         """
         mapping = target.primitives.get("instructions")
         if not mapping:
