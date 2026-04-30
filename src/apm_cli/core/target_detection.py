@@ -27,7 +27,9 @@ from typing import List, Literal, Optional, Tuple, Union  # noqa: F401, UP035
 import click
 
 # Valid target values (internal canonical form)
-TargetType = Literal["vscode", "claude", "cursor", "opencode", "codex", "gemini", "windsurf", "all", "minimal"]
+TargetType = Literal[
+    "vscode", "claude", "cursor", "opencode", "codex", "gemini", "windsurf", "all", "minimal"
+]
 
 # Compiler families used inside a multi-target frozenset. Narrower than
 # TargetType because the families are produced by _resolve_compile_target()
@@ -251,7 +253,9 @@ def get_target_description(target: UserTargetType) -> str:
 
 #: The complete set of real (non-pseudo) canonical targets.
 #: "minimal" is intentionally excluded -- it is a fallback pseudo-target.
-ALL_CANONICAL_TARGETS = frozenset({"vscode", "claude", "cursor", "opencode", "codex", "gemini", "windsurf"})
+ALL_CANONICAL_TARGETS = frozenset(
+    {"vscode", "claude", "cursor", "opencode", "codex", "gemini", "windsurf"}
+)
 
 #: Targets that the parser must accept but that are gated at runtime by
 #: ``is_enabled()`` in ``core/experimental.py`` and ``_flag_gated()`` in

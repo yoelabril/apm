@@ -1129,7 +1129,6 @@ class TestClaudeRulesSyncIntegration:
         assert result["errors"] == 0
 
 
-
 # ==================================================================
 # Windsurf Rules (.md with trigger/globs) tests
 # ==================================================================
@@ -1142,7 +1141,7 @@ class TestConvertToWindsurfRules:
         content = "---\napplyTo: '**/*.py'\n---\n\n# Python rules"
         result = InstructionIntegrator._convert_to_windsurf_rules(content)
         assert "trigger: glob" in result
-        assert "globs: **/*.py" in result
+        assert 'globs: "**/*.py"' in result
         assert "applyTo" not in result
 
     def test_no_apply_to_becomes_always_on(self):
@@ -1167,12 +1166,12 @@ class TestConvertToWindsurfRules:
     def test_quoted_apply_to_unquoted(self):
         content = "---\napplyTo: 'src/**/*.ts'\n---\n\n# TS"
         result = InstructionIntegrator._convert_to_windsurf_rules(content)
-        assert "globs: src/**/*.ts" in result
+        assert 'globs: "src/**/*.ts"' in result
 
     def test_double_quoted_apply_to(self):
         content = '---\napplyTo: "src/**/*.ts"\n---\n\n# TS'
         result = InstructionIntegrator._convert_to_windsurf_rules(content)
-        assert "globs: src/**/*.ts" in result
+        assert 'globs: "src/**/*.ts"' in result
 
 
 class TestWindsurfRulesIntegration:
@@ -1210,11 +1209,11 @@ class TestWindsurfRulesIntegration:
         assert target.exists()
         content = target.read_text()
         assert "trigger: glob" in content
-        assert "globs: **/*.py" in content
+        assert 'globs: "**/*.py"' in content
         assert "# Python rules" in content
 
     def test_filename_strips_instructions_md_suffix(self):
-        """Converts python.instructions.md → python.md."""
+        """Converts python.instructions.md -> python.md."""
         from apm_cli.integration.targets import KNOWN_TARGETS
 
         (self.project_root / ".windsurf").mkdir()

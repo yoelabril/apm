@@ -358,6 +358,9 @@ class HookIntegrator(BaseIntegrator):
         elif target == "codex":
             base_root = root_dir or ".codex"
             scripts_base = f"{base_root}/hooks/{package_name}"
+        elif target == "windsurf":
+            base_root = root_dir or ".windsurf"
+            scripts_base = f"{base_root}/hooks/{package_name}"
         else:
             base_root = root_dir or ".claude"
             scripts_base = f"{base_root}/hooks/{package_name}"

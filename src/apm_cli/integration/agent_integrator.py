@@ -11,6 +11,8 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List  # noqa: F401, UP035
 
+import yaml
+
 from apm_cli.integration.base_integrator import BaseIntegrator, IntegrationResult
 from apm_cli.utils.paths import portable_relpath
 
@@ -258,8 +260,6 @@ class AgentIntegrator(BaseIntegrator):
         if fm_match:
             body = content[fm_match.end() :]
             try:
-                import yaml
-
                 fm = yaml.safe_load(fm_match.group(1)) or {}
                 name = fm.get("name", name)
                 description = fm.get("description", description)
@@ -304,7 +304,7 @@ class AgentIntegrator(BaseIntegrator):
 
         fm_match = AgentIntegrator._FRONTMATTER_RE.match(content)
         if fm_match:
-            body = content[fm_match.end():]
+            body = content[fm_match.end() :]
             try:
                 fm = yaml.safe_load(fm_match.group(1)) or {}
             except Exception:

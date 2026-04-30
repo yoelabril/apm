@@ -157,7 +157,16 @@ class TestTargetProfileUserScope:
     """Validate user-scope metadata on TargetProfile in KNOWN_TARGETS."""
 
     def test_all_known_targets_present(self):
-        expected = {"copilot", "claude", "cursor", "opencode", "codex", "gemini", "windsurf", "copilot-cowork"}
+        expected = {
+            "copilot",
+            "claude",
+            "cursor",
+            "opencode",
+            "codex",
+            "gemini",
+            "windsurf",
+            "copilot-cowork",
+        }
         assert set(KNOWN_TARGETS.keys()) == expected
 
     def test_each_target_has_user_supported(self):
@@ -232,10 +241,11 @@ class TestTargetProfileUserScope:
         assert "instructions" in KNOWN_TARGETS["windsurf"].unsupported_user_primitives
 
     def test_supports_at_user_scope_windsurf_partial(self):
-        # Windsurf supports skills, commands, hooks at user scope but not instructions
+        # Windsurf supports skills, commands, hooks, agents at user scope but not instructions
         assert KNOWN_TARGETS["windsurf"].supports_at_user_scope("skills") is True
         assert KNOWN_TARGETS["windsurf"].supports_at_user_scope("commands") is True
         assert KNOWN_TARGETS["windsurf"].supports_at_user_scope("hooks") is True
+        assert KNOWN_TARGETS["windsurf"].supports_at_user_scope("agents") is True
         assert KNOWN_TARGETS["windsurf"].supports_at_user_scope("instructions") is False
 
     def test_windsurf_effective_root_project_scope(self):

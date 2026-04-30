@@ -633,9 +633,7 @@ class MCPIntegrator:
                     for name in removed:
                         del servers[name]
                     if removed:
-                        windsurf_mcp.write_text(
-                            _json.dumps(config, indent=2), encoding="utf-8"
-                        )
+                        windsurf_mcp.write_text(_json.dumps(config, indent=2), encoding="utf-8")
                         for name in removed:
                             _rich_success(
                                 f"Removed stale MCP server '{name}' from Windsurf config",
@@ -977,7 +975,15 @@ class MCPIntegrator:
                 manager = RuntimeManager()
                 installed_runtimes = []
 
-                for runtime_name in ["copilot", "codex", "vscode", "cursor", "opencode", "gemini", "windsurf"]:
+                for runtime_name in [
+                    "copilot",
+                    "codex",
+                    "vscode",
+                    "cursor",
+                    "opencode",
+                    "gemini",
+                    "windsurf",
+                ]:
                     try:
                         if runtime_name == "vscode":
                             if _is_vscode_available(project_root=project_root_path):

@@ -393,8 +393,10 @@ KNOWN_TARGETS: dict[str, TargetProfile] = {
     ),
     # Windsurf/Cascade -- .windsurf/ is the workspace config directory.
     # Rules are markdown files with trigger/globs frontmatter under .windsurf/rules/.
+    # Agents are deployed as skills under .windsurf/skills/<name>/SKILL.md
+    # (Cascade auto-invokes them when the description matches the task).
     # Skills use the standard SKILL.md format under .windsurf/skills/.
-    # Workflows (≈ commands) are markdown files under .windsurf/workflows/.
+    # Workflows (~= commands) are markdown files under .windsurf/workflows/.
     # Hooks are configured in .windsurf/hooks.json.
     # At user scope, ~/.codeium/windsurf/ is used.  Global rules use a single
     # file (~/.codeium/windsurf/memories/global_rules.md) with a different
@@ -406,21 +408,11 @@ KNOWN_TARGETS: dict[str, TargetProfile] = {
         name="windsurf",
         root_dir=".windsurf",
         primitives={
-            "instructions": PrimitiveMapping(
-                "rules", ".md", "windsurf_rules"
-            ),
-            "agents": PrimitiveMapping(
-                "skills", "/SKILL.md", "windsurf_agent_skill"
-            ),
-            "skills": PrimitiveMapping(
-                "skills", "/SKILL.md", "skill_standard"
-            ),
-            "commands": PrimitiveMapping(
-                "workflows", ".md", "windsurf_workflow"
-            ),
-            "hooks": PrimitiveMapping(
-                "", "hooks.json", "windsurf_hooks"
-            ),
+            "instructions": PrimitiveMapping("rules", ".md", "windsurf_rules"),
+            "agents": PrimitiveMapping("skills", "/SKILL.md", "windsurf_agent_skill"),
+            "skills": PrimitiveMapping("skills", "/SKILL.md", "skill_standard"),
+            "commands": PrimitiveMapping("workflows", ".md", "windsurf_workflow"),
+            "hooks": PrimitiveMapping("", "hooks.json", "windsurf_hooks"),
         },
         auto_create=False,
         detect_by_dir=True,

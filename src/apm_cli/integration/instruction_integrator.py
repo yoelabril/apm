@@ -70,9 +70,11 @@ class InstructionIntegrator(BaseIntegrator):
 
         Selects the content transform via ``format_id``:
 
-        * ``cursor_rules``  -- convert ``applyTo:`` to ``globs:`` frontmatter
-        * ``claude_rules``  -- convert ``applyTo:`` to ``paths:`` frontmatter
-        * anything else     -- copy verbatim (identity transform)
+        * ``cursor_rules``    -- convert ``applyTo:`` to ``globs:`` frontmatter
+        * ``claude_rules``    -- convert ``applyTo:`` to ``paths:`` frontmatter
+        * ``windsurf_rules``  -- convert ``applyTo:`` to ``trigger: glob`` frontmatter
+        * anything else       -- copy verbatim (identity transform, used by
+          ``windsurf_workflow`` and other plain-markdown formats)
         """
         mapping = target.primitives.get("instructions")
         if not mapping:
@@ -99,7 +101,9 @@ class InstructionIntegrator(BaseIntegrator):
         target_paths: list[Path] = []
         total_links_resolved = 0
 
-        # Security: reject paths that escape project_root (package-controlled stem).
+        # Security: reject paths that escape deploy_dir (package-controlled stem).
+        # Validated against deploy_dir (not project_root) so user-scope targets
+        # whose root resolves outside the workspace still work correctly.
         from apm_cli.utils.path_security import ensure_path_within
 
         for source_file in instruction_files:
@@ -112,7 +116,7 @@ class InstructionIntegrator(BaseIntegrator):
                 target_name = source_file.name
 
             target_path = deploy_dir / target_name
-            ensure_path_within(target_path, project_root)
+            ensure_path_within(target_path, deploy_dir)
 
             rel_path = portable_relpath(target_path, project_root)
 
@@ -347,15 +351,15 @@ class InstructionIntegrator(BaseIntegrator):
         apply_to = ""
 
         # Parse existing frontmatter
-        fm_match = re.match(r'^---\s*\n(.*?)\n---\s*\n?', content, re.DOTALL)
+        fm_match = re.match(r"^---\s*\n(.*?)\n---\s*\n?", content, re.DOTALL)
         if fm_match:
             fm_block = fm_match.group(1)
-            body = content[fm_match.end():]
+            body = content[fm_match.end() :]
 
             for line in fm_block.splitlines():
                 line_stripped = line.strip()
                 if line_stripped.startswith("applyTo:"):
-                    apply_to = line_stripped[len("applyTo:"):].strip().strip("'\"")
+                    apply_to = line_stripped[len("applyTo:") :].strip().strip("'\"")
 
         # Build Windsurf rules frontmatter
         parts = ["---"]
