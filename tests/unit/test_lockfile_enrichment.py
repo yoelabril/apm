@@ -516,3 +516,29 @@ class TestWindsurfTargetParity:
             deployed = yaml.safe_load(result)["dependencies"][0]["deployed_files"]
             assert path in deployed, f"{target}: {path} dropped after refactor"
             assert ".unrelated/foo" not in deployed, f"{target}: leaked unrelated file"
+
+    def test_target_all_includes_every_deployable_target_prefix(self):
+        """Structural guard: ``--target all`` must include the prefixes for
+        every deployable target in KNOWN_TARGETS, not a hard-coded subset.
+
+        This is the general-pattern guard for the silent-drop class of
+        bug that originally hid ``.windsurf/`` and ``.gemini/`` from
+        ``--target all``.  Adding a new deployable target (one with
+        ``detect_by_dir or auto_create``) automatically extends this
+        assertion -- if a future target's prefix is not picked up by
+        ``_all_target_prefixes()``, this test fails immediately at
+        registration time rather than silently in user output.
+        """
+        from apm_cli.bundle.lockfile_enrichment import _all_target_prefixes
+        from apm_cli.integration.targets import KNOWN_TARGETS
+
+        all_prefixes = _all_target_prefixes()
+        for name, profile in KNOWN_TARGETS.items():
+            if not (profile.detect_by_dir or profile.auto_create):
+                continue
+            for expected in profile.effective_pack_prefixes:
+                assert expected in all_prefixes, (
+                    f"target {name!r} prefix {expected!r} missing from "
+                    f"_all_target_prefixes(); --target all would silently drop "
+                    f"its files"
+                )

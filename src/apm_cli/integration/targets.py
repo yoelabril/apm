@@ -446,6 +446,7 @@ KNOWN_TARGETS: dict[str, TargetProfile] = {
         user_supported=True,
         user_root_dir=".gemini",
         compile_family="gemini",
+        hooks_config_display=".gemini/settings.json",
     ),
     # Codex CLI: skills use the cross-tool .agents/ dir (agent skills standard),
     # agents are TOML under .codex/agents/, hooks merge into .codex/hooks.json.

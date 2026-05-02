@@ -190,3 +190,23 @@ def test_adapter_target_name_resolves_to_known_target(
         f"entry exists in KNOWN_TARGETS (and {name!r} is not in the documented "
         f"MCP-only allowlist {_MCP_ONLY_ADAPTER_NAMES})"
     )
+
+
+def test_client_factory_supported_clients_matches_adapter_set() -> None:
+    """``ClientFactory.supported_clients()`` must enumerate exactly the
+    adapter classes registered in ``_MCP_CLIENT_REGISTRY`` and exposed
+    through the ``MCPClientAdapter`` subclass list.
+
+    Closes the N+1 site at ``mcp_integrator.py`` runtime loops:
+    callers iterate this set instead of hand-maintaining parallel lists.
+    A missing adapter here means a freshly-added MCP target would be
+    silently skipped by cleanup loops and availability probes.
+    """
+    from apm_cli.factory import ClientFactory
+
+    supported = ClientFactory.supported_clients()
+    expected = {cls.target_name for cls in _ADAPTER_CLASSES}
+    assert supported == expected, (
+        f"ClientFactory.supported_clients() drift: registered={expected}, "
+        f"factory={supported}.  Update _MCP_CLIENT_REGISTRY in factory.py."
+    )

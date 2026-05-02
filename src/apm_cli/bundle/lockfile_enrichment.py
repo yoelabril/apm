@@ -89,7 +89,7 @@ def _get_target_prefixes(target: str) -> list[str]:
       to ``.github/``); kept for backward compatibility because
       ``vscode`` is a valid MCP-only adapter target_name.
     * Unknown targets -- fall back to the union, matching the previous
-      behavior of ``_TARGET_PREFIXES.get(target, _TARGET_PREFIXES["all"])``.
+      behavior of falling through to the all-targets default.
     """
     if target == "all":
         return _all_target_prefixes()

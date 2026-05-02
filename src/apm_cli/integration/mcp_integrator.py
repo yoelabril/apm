@@ -458,16 +458,11 @@ class MCPIntegrator:
             return
 
         # Determine which runtimes to clean, mirroring install-time logic.
-        all_runtimes = {
-            "vscode",
-            "copilot",
-            "codex",
-            "cursor",
-            "opencode",
-            "gemini",
-            "claude",
-            "windsurf",
-        }
+        # Derived from ClientFactory so adding a new MCP-capable target
+        # extends cleanup automatically (no parallel list to maintain).
+        from apm_cli.factory import ClientFactory
+
+        all_runtimes = ClientFactory.supported_clients()
         if runtime:  # noqa: SIM108
             target_runtimes = {runtime}
         else:
@@ -847,20 +842,11 @@ class MCPIntegrator:
                 return available
 
         except ImportError:
+            # Derived from ClientFactory; see _MCP_CLIENT_REGISTRY.
+            from apm_cli.factory import ClientFactory
+
             mcp_compatible = [
-                rt
-                for rt in detected_runtimes
-                if rt
-                in [
-                    "vscode",
-                    "copilot",
-                    "codex",
-                    "cursor",
-                    "opencode",
-                    "gemini",
-                    "claude",
-                    "windsurf",
-                ]
+                rt for rt in detected_runtimes if rt in ClientFactory.supported_clients()
             ]
             return [rt for rt in mcp_compatible if shutil.which(rt)]
 

@@ -264,7 +264,7 @@ def _resolve_compile_target(target):
     "-t",
     type=TargetParamType(),
     default=None,
-    help="Target platform (comma-separated). Values: copilot, claude, cursor, opencode, codex, gemini, agent-skills, all. 'agent-skills' deploys to .agents/skills/ (cross-client). 'all' = copilot+claude+cursor+opencode+codex+gemini (excludes agent-skills); combine with 'agent-skills' for both.",
+    help="Target platform (comma-separated). Values: copilot, claude, cursor, opencode, codex, gemini, windsurf, agent-skills, all. 'agent-skills' deploys to .agents/skills/ (cross-client). 'all' = copilot+claude+cursor+opencode+codex+gemini+windsurf (excludes agent-skills); combine with 'agent-skills' for both.",
 )
 @click.option(
     "--dry-run",
