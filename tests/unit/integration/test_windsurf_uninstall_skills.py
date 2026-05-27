@@ -110,11 +110,17 @@ class TestWindsurfSkillUninstallCleanup:
         }
         stats = SkillIntegrator().sync_integration(None, tmp_path, managed_files=managed)
 
-        assert stats["files_removed"] == 2
-        assert not managed_a.exists()
-        assert not managed_b.exists()
-        assert user_skill.exists()
+        # Primary assertions: filesystem outcomes (the actual user-visible
+        # contract). The 'files_removed' stats key is the cross-integrator
+        # counter convention (see base_integrator, hook_integrator, etc.)
+        # and counts directories here -- we keep a sanity check on it but
+        # do not couple the test to its semantics.
+        assert not managed_a.exists(), "managed skill dir 'code-review' must be removed"
+        assert not managed_b.exists(), "managed skill dir 'grill-me' must be removed"
+        assert user_skill.exists(), "user-authored skill dir must be preserved"
         assert (user_skill / "SKILL.md").read_text() == "authored by user\n"
+        assert stats["errors"] == 0
+        assert stats["files_removed"] == 2
 
     def test_sync_handles_trailing_slash_in_managed_path(self, tmp_path: Path):
         """Lockfile entries may carry a trailing slash on directory paths;
@@ -128,5 +134,10 @@ class TestWindsurfSkillUninstallCleanup:
         managed = {".windsurf/skills/code-review/"}
         stats = SkillIntegrator().sync_integration(None, tmp_path, managed_files=managed)
 
+        # Primary assertion: the directory is gone regardless of how the
+        # integrator counts it internally.
+        assert not skill.exists(), (
+            "skill dir must be removed even when lockfile path has trailing slash"
+        )
+        assert stats["errors"] == 0
         assert stats["files_removed"] == 1
-        assert not skill.exists()
